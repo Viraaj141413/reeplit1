@@ -1,0 +1,21 @@
+.App {
+  text-align: center;
+  padding: 2rem;
+}
+
+.card {
+  padding: 2rem;
+}
+
+button {
+  background: #646cff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #535bf2;
+}
