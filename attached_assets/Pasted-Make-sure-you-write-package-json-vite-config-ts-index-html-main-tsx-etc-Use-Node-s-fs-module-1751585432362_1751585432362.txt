@@ -1,0 +1,107 @@
+Make sure you write:
+
+package.json
+
+vite.config.ts
+
+index.html, main.tsx, etc.
+
+Use Node’s fs module:
+
+ts
+Copy
+Edit
+import fs from 'fs/promises';
+await fs.writeFile('/workspace/user-123/my-app/index.html', htmlContent);
+STEP 2: Create a Preview Server
+You’ll need a Node.js server that can start a dev server for each project.
+
+✅ Option A: Serve Static Files (for HTML/CSS/JS)
+ts
+Copy
+Edit
+// server/preview-server.ts
+import express from 'express';
+import path from 'path';
+
+const app = express();
+const port = 3001; // You can make this dynamic per user
+
+const projectPath = path.join(__dirname, '../workspace/user-123/my-app');
+app.use(express.static(projectPath));
+
+app.listen(port, () => {
+  console.log(`Preview running at http://localhost:${port}`);
+});
+✅ Option B: Start a Dev Server (for React/Vite Projects)
+ts
+Copy
+Edit
+// server/start-vite.ts
+import { exec } from 'child_process';
+
+export function startViteServer(projectPath: string, port = 3001) {
+  const proc = exec(`vite preview --port ${port}`, { cwd: projectPath });
+
+  proc.stdout?.on('data', (data) => console.log(`[vite] ${data}`));
+  proc.stderr?.on('data', (data) => console.error(`[vite error] ${data}`));
+
+  return proc;
+}
+Call this after saving the project files.
+
+STEP 3: Display in Frontend via <iframe>
+In your React frontend (like /app/page.tsx):
+
+tsx
+Copy
+Edit
+import { useEffect, useState } from 'react';
+
+export default function Preview() {
+  const [port] = useState(3001); // Change per user/session if needed
+
+  return (
+    <div className="mt-4 border rounded-xl shadow-xl overflow-hidden">
+      <iframe
+        src={`http://localhost:${port}`}
+        className="w-full h-[80vh]"
+        sandbox="allow-scripts allow-same-origin"
+      />
+    </div>
+  );
+}
+STEP 4: Tie It Together
+When Gemini is done generating:
+
+Save files to /workspace/user-123/my-app/
+
+Run startViteServer('/workspace/user-123/my-app', 3001)
+
+In React, embed <iframe src="http://localhost:3001" />
+
+🚀 Example Full Flow
+ts
+Copy
+Edit
+// After Gemini finishes:
+await saveGeminiOutput(files, '/workspace/user-123/project-1');
+startViteServer('/workspace/user-123/project-1', 3001);
+And the frontend iframe shows it instantly.
+
+✅ You Now Have:
+A file generator (Gemini)
+
+A dev server starter (Node)
+
+A live embedded preview (React + iframe)
+
+Want me to generate:
+
+A full working Express+Vite preview server?
+
+A project manager for starting/stopping previews?
+
+Support for multiple users and ports?
+
+Let me know and I’ll code it.
